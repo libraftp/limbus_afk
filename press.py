@@ -34,7 +34,7 @@ def press_keys(keys):
         pyautogui.press(key)  # 使用 pyautogui.press() 來模擬按鍵輸入
         time.sleep(0.1)  # 等待遊戲反應
 
-def window_cal(target_loc, template, window_title="LimbusCompany"):
+def window_cal(x, y, template, window_title="LimbusCompany"):
     """將滑鼠移動到指定視窗的相對位置並點擊左鍵
 
     Args:
@@ -51,13 +51,6 @@ def window_cal(target_loc, template, window_title="LimbusCompany"):
     window_y = window_rect.top  # 視窗左上角 y 座標
     template_height, template_width = template.shape[:2]
 
-    if isinstance(target_loc, np.ndarray) and target_loc.shape == (1, 2):  # 檢查是否為 np.array([pt]) 格式
-        y = target_loc[0][1]  # 從 pt 中取得 y 座標
-        x = target_loc[0][0]  # 從 pt 中取得 x 座標
-    elif isinstance(target_loc, tuple) and len(target_loc) == 2 and isinstance(target_loc[0], np.ndarray) and isinstance(target_loc[1], np.ndarray):  # 檢查是否為 (array([y]), array([x])) 格式
-        y = target_loc[0][0]  # 從 array([y]) 中取得 y 座標
-        x = target_loc[1][0]  # 從 array([x]) 中取得 x 座標
-
     # 計算滑鼠要移動到的視窗相對位置 (將匹配位置加上模板中心偏移量)
     target_x_relative = x + template_width // 2  # 模板中心 x 座標
     target_y_relative = y + template_height // 2 # 模板中心 y 座標
@@ -65,11 +58,7 @@ def window_cal(target_loc, template, window_title="LimbusCompany"):
     # 將視窗相對位置轉換為螢幕絕對位置
     target_x_absolute = window_x + target_x_relative
     target_y_absolute = window_y + target_y_relative
-    """    
-    print(template_height, template_width)
-    print(target_x_relative, target_y_relative)
-    print(target_x_absolute, target_y_absolute)
-    """
+
     return target_x_absolute, target_y_absolute
 
 def move_click(x, y):
@@ -84,8 +73,6 @@ def move_and_drag_down(x, y):
     Args:
         x: 目標位置的 x 座標
         y: 目標位置的 y 座標
-        duration: 拖曳的持續時間 (秒)
-        steps: 拖曳的步數
     """
     pyautogui.moveTo(x, y)  # 移動到指定位置
     pyautogui.mouseDown()  # 按下鼠標左鍵
