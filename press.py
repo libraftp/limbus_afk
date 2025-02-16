@@ -1,9 +1,9 @@
 import time
 import pyautogui
-import pywinauto.mouse  # 引入 pywinauto.mouse 模組
 import pygetwindow as gw
 from pywinauto.application import Application
 import numpy as np
+import random
 
 # 全域變數用於儲存視窗物件
 window = None
@@ -34,7 +34,7 @@ def press_keys(keys):
         pyautogui.press(key)  # 使用 pyautogui.press() 來模擬按鍵輸入
         time.sleep(0.1)  # 等待遊戲反應
 
-def window_cal(x, y, template, window_title="LimbusCompany"):
+def window_cal(x, y, template, window_title="LimbusCompany", moveX = 5, moveY = 5):
     """將滑鼠移動到指定視窗的相對位置並點擊左鍵
 
     Args:
@@ -56,8 +56,8 @@ def window_cal(x, y, template, window_title="LimbusCompany"):
     target_y_relative = y + template_height // 2 # 模板中心 y 座標
 
     # 將視窗相對位置轉換為螢幕絕對位置
-    target_x_absolute = window_x + target_x_relative
-    target_y_absolute = window_y + target_y_relative
+    target_x_absolute = window_x + target_x_relative + random.randint(-moveX, +moveX)
+    target_y_absolute = window_y + target_y_relative + random.randint(-moveY, +moveY)
 
     return target_x_absolute, target_y_absolute
 
