@@ -1,12 +1,10 @@
-import cv2
 import input_pic
 import press
-import numpy as np
 import screenshot  # 引入 screenshot 模組
 from time import sleep
 import pyautogui
 
-def select(): # 傳入視窗物件
+def select():
     """
     按照指定順序尋找並點擊圖片，直到找到 "into.png" 為止。
     """
@@ -32,10 +30,6 @@ def select(): # 傳入視窗物件
         for target, similar in targets:
             gray, frame = screenshot.screenshot("LimbusCompany") # 每次都重新截圖
             
-            # 檢查是否在shop
-            loc, template = input_pic.match_template(gray, "inshop.png")
-            if loc[0].size > 0:
-                return False
                     
             loc, template = input_pic.match_template(gray, "into.png")
             if loc is not None and loc[0].size > 0:
@@ -65,8 +59,8 @@ def question(sk_loc, sk_template):
     """
     targets = [
         "select.png",
-        "check.png",
-        "EGO gift.png"
+        "check1.png",
+        "check2.png"
     ]
 
     percentage = [
@@ -74,22 +68,14 @@ def question(sk_loc, sk_template):
         "high.png",
         "normal.png",
     ]
+
+    x, y = sk_loc[1][0], sk_loc[0][0]
+    skipx, skipy = press.window_cal(x, y, sk_template)
+
     while True:
         gray, frame = screenshot.screenshot("LimbusCompany") # 每次都重新截圖
         operation = False
-        for target in targets:
-        #優先選擇select(不用拚點又有ego gift的)
-            loc, template = input_pic.match_template(gray, target, 0.7)
-            if loc is not None and loc[0].size > 0:
-                operation = True
-                matches = loc[0].size  # 匹配到的目標數量
-                if target == "select.png":
-                    finish = True
-                for i in range(matches):
-                    x, y = loc[1][i], loc[0][i]
-                    x, y = press.window_cal(x, y, template)
-                    press.move_click(x, y)
-                    
+
         loc, template = input_pic.match_template(gray, "proceed.png")
         if loc[0].size > 0:
             operation = True
@@ -105,12 +91,17 @@ def question(sk_loc, sk_template):
             press.move_click(x, y)
             if finish:
                 return True
-        
-        loc, template = input_pic.match_template(gray, "commence.png")
-        if loc[0].size > 0:
-            x, y = loc[1][0], loc[0][0]
-            x, y = press.window_cal(x, y, template)
-            press.move_click(x, y)
+
+        for target in targets:
+        #優先選擇select(不用拚點又有ego gift的)
+            loc, template = input_pic.match_template(gray, target, 0.7)
+            if loc is not None and loc[0].size > 0:
+                operation = True
+                if target == "select.png":
+                    finish = True
+                x, y = loc[1][0], loc[0][0]
+                x, y = press.window_cal(x, y, template)
+                press.move_click(x, y)
 
         for target in percentage:
             loc, template = input_pic.match_template(gray, target)
@@ -118,25 +109,55 @@ def question(sk_loc, sk_template):
                 x, y = loc[1][0], loc[0][0]
                 x, y = press.window_cal(x, y, template)
                 press.move_click(x, y)
+                sleep(1)
+                gray, frame = screenshot.screenshot("LimbusCompany")
+                loc, template = input_pic.match_template(gray, "commence.png")
+                if loc[0].size > 0:
+                    x, y = loc[1][0], loc[0][0]
+                    x, y = press.window_cal(x, y, template)
+                    press.move_click(x, y)
+                    sleep(5)
+                    for i in range(3):
+                        press.move_click(skipx, skipy)
+                        sleep(0.1)
+
 
         if not operation:
             print("沒東西")
-            x, y = sk_loc[1][0], sk_loc[0][0]
-            x, y = press.window_cal(x, y, sk_template)
-            press.move_click(x, y)
-            sleep(0.1)
-            press.move_click(x, y)
-            sleep(0.1)
-            press.move_click(x, y)
+            for i in range(3):
+                press.move_click(skipx, skipy)
+                sleep(0.1)
                 
 
 
-def shop():
+def shop(element, shop_refresh):
     #可能還需要增加強化和購買功能
     while True:
         gray, frame = screenshot.screenshot("LimbusCompany")
-        loc, template = input_pic.match_template(gray, "leave.png")
+        target_pic = element + "_s.png"
+
+        loc, template = input_pic.match_template(gray, target_pic)
+        matches = loc[0].size  # 匹配到的目標數量
+        for i in range(matches):
+            x, y = loc[1][i], loc[0][i]
+            x, y = press.window_cal(x, y, template)
+            press.move_click(x, y)
+            sleep(0.5)
+            x, y = press.window_cal(490, 420, template)
+            press.move_click(x, y)
+            sleep(0.5)
+            press.move_click(x, y + 120)
+            
+        gray, frame = screenshot.screenshot("LimbusCompany")
+        loc, template = input_pic.match_template(gray, "shop refresh.png")
         if loc[0].size > 0:
+            x, y = loc[1][0], loc[0][0]
+            x, y = press.window_cal(x, y, template)
+            press.move_click(x, y)
+            shop_refresh = True
+
+        loc, template = input_pic.match_template(gray, "leave.png")
+        if loc[0].size > 0 and shop_refresh:
             x, y = loc[1][0], loc[0][0] # 從 array([y]) 和 array([x]) 中取得 y, x 座標
             x, y = press.window_cal(x, y, template)
             press.move_click(x, y)

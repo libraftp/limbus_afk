@@ -16,10 +16,10 @@ position = [2, 3]
 sinner_order = [6, 7, 3, 9, 5, 1]
 refresh_times = 3
 
-###這兩個不用改
+###這三個不用改
 reward = False
 sinner_select = False
-
+shop_refresh = False
 # 取得視窗物件
 window = press.get_window_object(window_title)
 
@@ -36,16 +36,9 @@ keyboard.add_hotkey('pause', toggle_pause)
 
 # 讀取模板圖片
 input_pic.load_templates()
-#製作question select.py處理選到question內的事務(finish)
-#製作select encounter card處理打完boss後選擇好處
-#製作選擇ego
-#製作sinner select.py進行選角
-#製作select dreamin star.py選擇卡片(finish)
-#製作選擇初始ego gift
 while True:
     if not is_paused:
         try:
-            #pyautogui.moveTo(1000, 800)
             # 擷取遊戲畫面
             window.activate()
             gray, frame = screenshot.screenshot("LimbusCompany")
@@ -54,7 +47,7 @@ while True:
             loc, template = input_pic.match_template(gray, "auto_attack.png")
             if loc[0].size > 0:
                 x, y = loc[1][0], loc[0][0] # 從 array([y]) 和 array([x]) 中取得 y, x 座標
-                x, y = press.window_cal(x - 100, y - 100, template)
+                x, y = press.window_cal(x - 530, y, template)
                 press.move_click(x, y)
                 press.press_keys(["p", "enter"])
             
@@ -77,7 +70,14 @@ while True:
                     x, y = press.window_cal(x, y, template)
                     press.move_click(x, y)
 
-            #選擇戰鬥罪人
+            # 判斷是否找到 team confirm.png
+            loc, template = input_pic.match_template(gray, "team confirm.png")
+            if loc[0].size > 0:
+                print("確認隊伍")
+                x, y = loc[1][0], loc[0][0]
+                x, y = press.window_cal(x, y, template)
+                press.move_click(x, y)
+            
 
             # 判斷是否找到 battle.png
             loc, template = input_pic.match_template(gray, "battle.png")
@@ -140,8 +140,8 @@ while True:
             # 判斷是否找到 inshop.png
             loc, template = input_pic.match_template(gray, "inshop.png")
             if loc[0].size > 0:
-                print("在shop中，準備離開")
-                if mission.shop():
+                print("在shop中")
+                if mission.shop(element, shop_refresh):
                     print("離開商店！")
             
             #判斷找到select_ego_gift.png
