@@ -23,6 +23,7 @@ def select():
         ("normal_battle.png", 0.7),
         ("hard_battle_m.png", 0.8),
         ("hard_battle_u.png", 0.8),
+        ("specific_battle.png", 0.8),
         ("specific_money_d.png", 0.8)
     ]
 
@@ -36,6 +37,14 @@ def select():
                 press.press_keys(["enter"])
                 return True  # 找到 "into.png"，結束函式
             
+            loc, template = input_pic.match_template(gray, "battle.png")
+            if loc[0].size > 0:
+                return False
+            
+            loc, template = input_pic.match_template(gray, "skip.png")
+            if loc[0].size > 0:
+                return False
+
             loc, template = input_pic.match_template(gray, target, similar)
             if loc[0].size > 0:
                 matches = loc[0].size  # 匹配到的目標數量
@@ -147,7 +156,10 @@ def shop(element, shop_refresh):
             press.move_click(x, y)
             sleep(0.5)
             press.move_click(x, y + 120)
-            
+
+        if shop_refresh:
+            break
+
         gray, frame = screenshot.screenshot("LimbusCompany")
         loc, template = input_pic.match_template(gray, "shop refresh.png")
         if loc[0].size > 0:
@@ -156,14 +168,14 @@ def shop(element, shop_refresh):
             press.move_click(x, y)
             shop_refresh = True
 
-        loc, template = input_pic.match_template(gray, "leave.png")
-        if loc[0].size > 0 and shop_refresh:
-            x, y = loc[1][0], loc[0][0] # 從 array([y]) 和 array([x]) 中取得 y, x 座標
-            x, y = press.window_cal(x, y, template)
-            press.move_click(x, y)
-            sleep(0.5)
-            press.press_keys(["enter"])
-            return True
+    loc, template = input_pic.match_template(gray, "leave.png")
+    if loc[0].size > 0 and shop_refresh:
+        x, y = loc[1][0], loc[0][0] # 從 array([y]) 和 array([x]) 中取得 y, x 座標
+        x, y = press.window_cal(x, y, template)
+        press.move_click(x, y)
+        sleep(0.5)
+        press.press_keys(["enter"])
+        return True
 
 def dream_star(gray):
     targets = [
@@ -251,7 +263,6 @@ def sinner(sinner_order, template):
         press.move_click(x, y)
         del sinlist[sin]
 
-    print(sinlist)
     for pos in sinlist.values():
         x, y = pos[0], pos[1]
         x, y = press.window_cal(x, y, template)
@@ -296,7 +307,7 @@ def warningEGOgift(gray, element):
     press.press_keys(["enter"])
 
 def pack_select(pac, refresh_times):
-#滑鼠先移到右上角避免卡住
+
     pac = ["addicting lust.png",
            "devoured gluttony.png",
            "emotional repression.png",
@@ -306,7 +317,10 @@ def pack_select(pac, refresh_times):
            "the magic sea.png",
            "to be cleaved.png",
            "to be pierced.png",
-           "vield my flesh to.png"]
+           "vield my flesh to.png",
+           "emotional subservience.png",
+           "degraded gloom.png"
+           ]
     
     gray, frame = screenshot.screenshot("LimbusCompany")
     re_loc, re_template = input_pic.match_template(gray, "refresh.png")
@@ -322,6 +336,7 @@ def pack_select(pac, refresh_times):
                 press.move_and_drag_down(x, y)
                 pac.remove(pack)
                 return True
+            refresh_times -= 1
         
         press.move_click(rex, rey)
         sleep(3)

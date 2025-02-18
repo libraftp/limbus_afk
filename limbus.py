@@ -43,6 +43,20 @@ while True:
             window.activate()
             gray, frame = screenshot.screenshot("LimbusCompany")
 
+            loc, template = input_pic.match_template(gray, "home.png")
+            if loc[0].size > 0:
+                x, y = press.window_cal(405, 570, template)
+                press.move_click(x, y)
+                reward = False
+                sinner_select = False
+                shop_refresh = False
+
+            loc, template = input_pic.match_template(gray, "mirror.png")
+            if loc[0].size > 0:
+                x, y = loc[1][0], loc[0][0] # 從 array([y]) 和 array([x]) 中取得 y, x 座標
+                x, y = press.window_cal(x, y, template)
+                press.move_click(x, y)
+
             # 判斷是否找到 attack.png
             loc, template = input_pic.match_template(gray, "auto_attack.png")
             if loc[0].size > 0:
@@ -69,6 +83,8 @@ while True:
                     x, y = loc[1][0], loc[0][0]
                     x, y = press.window_cal(x, y, template)
                     press.move_click(x, y)
+                    sleep(1)
+                    press.press_keys(["enter"])
 
             # 判斷是否找到 team confirm.png
             loc, template = input_pic.match_template(gray, "team confirm.png")
@@ -104,7 +120,7 @@ while True:
                 sinner_select = True
             
             #判斷找到confrim.png
-            loc, template = input_pic.match_template(gray, "confirm.png")
+            loc, template = input_pic.match_template(gray, "confirm.png", 0.7)
             re_loc, re_template = input_pic.match_template(gray, "reward_card.png")
             if loc[0].size > 0 and re_loc[0].size > 0 and reward:
                 print("選擇獎勵")
@@ -113,7 +129,7 @@ while True:
             elif loc[0].size > 0:
                 print("找到 confirm.png！")
                 x, y = loc[1][0], loc[0][0]
-                x, y = press.window_cal(x, y, template)
+                x, y = press.window_cal(x, y, template, window_title, 0, 0)
                 press.move_click(x, y)
 
             #判斷是否找到 into.png
@@ -149,6 +165,7 @@ while True:
             if loc[0].size > 0:
                 print(f"選擇初始ego禮物，將選擇 {element}")
                 if mission.initialEGOgift(gray, element, position):
+
                     print("選完初始ego")
             
             #判斷找到select_ego_gift.png
@@ -161,6 +178,20 @@ while True:
             if loc[0].size > 0:
                 print("選擇卡包")
                 mission.pack_select(gray, refresh_times)
+            
+            loc, template = input_pic.match_template(gray, "exploration complete.png")
+            if loc[0].size > 0:
+                x, y = press.window_cal(720, 485, template)
+                press.move_click(x, y)
+            
+            loc, template = input_pic.match_template(gray, "claim.png")
+            if loc[0].size > 0:
+                x, y = loc[1][0], loc[0][0]
+                x, y = press.window_cal(x, y, template)
+                press.move_click(x, y)
+                sleep(3)
+                press.press_keys(["enter"])
+
 
             #cv2.imshow("test", gray)
             cv2.waitKey(1)
