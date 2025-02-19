@@ -13,7 +13,7 @@ window_title = "LimbusCompany"
 #一些參數設定
 element = "pierce"
 position = [2, 3]
-sinner_order = [6, 7, 3, 9, 5, 1]
+sinner_order = [6, 7, 3, 9, 5, 1, 12, 11, 4]
 refresh_times = 3
 
 ###這三個不用改
@@ -57,15 +57,6 @@ while True:
                 x, y = press.window_cal(x, y, template)
                 press.move_click(x, y)
 
-            # 判斷是否找到 attack.png
-            loc, template = input_pic.match_template(gray, "auto_attack.png")
-            if loc[0].size > 0:
-                x, y = loc[1][0], loc[0][0] # 從 array([y]) 和 array([x]) 中取得 y, x 座標
-                x, y = press.window_cal(x - 530, y, template)
-                press.move_click(x, y)
-                press.press_keys(["p", "enter"])
-            
-            # 不知道為甚麼位置很奇怪
             # 判斷是否找到 dungoen_enter.PNG
             loc, template = input_pic.match_template(gray, "dungoen_enter.png")
             if loc[0].size > 0:
@@ -85,6 +76,10 @@ while True:
                     press.move_click(x, y)
                     sleep(1)
                     press.press_keys(["enter"])
+
+            loc, template = input_pic.match_template(gray, "auto_attack.png")
+            if loc[0].size > 0:
+                mission.attack()
 
             # 判斷是否找到 team confirm.png
             loc, template = input_pic.match_template(gray, "team confirm.png")
@@ -171,19 +166,21 @@ while True:
             #判斷找到select_ego_gift.png
             loc, template = input_pic.match_template(gray, "warning ego.png")
             if loc[0].size > 0:
+                print("選擇戰鬥後ego")
                 mission.warningEGOgift(gray, element)
 
             #判斷找到theme pack.png
             loc, template = input_pic.match_template(gray, "theme pack.png")
             if loc[0].size > 0:
                 print("選擇卡包")
-                mission.pack_select(gray, refresh_times)
+                mission.pack_select(refresh_times)
             
-            loc, template = input_pic.match_template(gray, "exploration complete.png")
+            loc, template = input_pic.match_template(gray, "claim rewards.png")
             if loc[0].size > 0:
-                x, y = press.window_cal(720, 485, template)
+                x, y = loc[1][0], loc[0][0]
+                x, y = press.window_cal(x, y, template)
                 press.move_click(x, y)
-            
+
             loc, template = input_pic.match_template(gray, "claim.png")
             if loc[0].size > 0:
                 x, y = loc[1][0], loc[0][0]

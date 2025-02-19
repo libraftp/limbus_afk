@@ -30,7 +30,7 @@ def screenshot_region(window_title, region):
 
     Args:
         window_title: 視窗標題 (字串)。
-        region: 截圖區域，格式為 (left, top, width, height) 的 tuple。
+        region: 截圖區域，格式為 (left, top, right, down) 的 tuple。
 
     Returns:
         gray: 灰階圖像 (numpy array)。

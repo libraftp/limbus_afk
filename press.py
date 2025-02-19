@@ -64,7 +64,7 @@ def window_cal(x, y, template, window_title="LimbusCompany", moveX = 5, moveY = 
 def move_click(x, y):
     #將滑鼠移動到指定視窗的相對位置並點擊左鍵
     pyautogui.moveTo(x, y)
-    print(x, y)
+    #print(x, y)
     pyautogui.click()
 
 def move_and_drag_down(x, y):
